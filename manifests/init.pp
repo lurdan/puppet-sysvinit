@@ -1,16 +1,17 @@
 class sysvinit {
-  case $::operatingsystem {
-    /(?i-mx:debian|ubuntu)/: {
+  case $::osfamily {
+    'Debian': {
       package { 'sysvinit': }
     }
-    /(?i-mx:redhat|centos)/: {
+    'RedHat': {
       package {
+        'initscripts':;
         'sysvinit':
+          require => Package['initscripts'],
           name => $::lsbmajdistrelease ? {
             '5' => 'SysVinit',
             '6' => 'sysvinit-tools',
           };
-        'initscripts': before => Package['sysvinit'];
       }
     }
   }
@@ -35,3 +36,4 @@ class sysvinit {
     onlyif => '/usr/bin/test -e /dev/initctl',
   }
 }
+
